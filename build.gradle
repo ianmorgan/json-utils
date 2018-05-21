@@ -12,6 +12,9 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 
 repositories {
     mavenCentral()
@@ -19,7 +22,7 @@ repositories {
 }
 
 group = 'ianmorgan'
-version = '0.0.6'
+version = '0.0.8-SNAPSHOT'
 
 dependencies {
     compile group: 'org.json', name: 'json', version: '20180130'
@@ -36,9 +39,10 @@ project.publishing {
 
 project.apply plugin: "com.jfrog.bintray"
 
+// used https://github.com/bintray/gradle-bintray-plugin/issues/170 as example
 bintray {
     user = 'ianmorgan'
-    key = bintray_api_key
+    key = bintray_api_key   // in gradle.properties
 
     publications = project.publishing.publications*.name
 
