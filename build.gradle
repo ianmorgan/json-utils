@@ -1,0 +1,76 @@
+buildscript {
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.0.2'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.0.0"
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.unbroken-dome.test-sets'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+artifactory {
+    clientConfig.setIncludeEnvVars(true)
+
+    contextUrl = 'https://mirriad.artifactoryonline.com/mirriad/'
+    publish {
+        repository {
+            repoKey = 'libs-release-local'
+            username = "123"
+            password = "123"
+        }
+        defaults {
+            publications('mavenJava')
+            publishArtifacts = true
+            publishPom = true
+            publishIvy = true
+        }
+    }
+    resolve {
+        contextUrl = 'https://mirriad.artifactoryonline.com/mirriad/'
+        repository {
+            repoKey = 'libs-release-local'
+            username = "123"
+            password = "123"
+            maven = true
+        }
+    }
+}
+
+
+group = 'ianmorgan'
+version = '0.0.2'
+
+
+dependencies {
+    
+    compile group: 'org.json', name: 'json', version: '20180130'
+
+}
+
+
+//task wrapper(type: Wrapper) {
+//    gradleVersion = '3.2'
+//}
