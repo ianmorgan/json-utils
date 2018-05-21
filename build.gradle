@@ -5,72 +5,62 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.0.2'
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.0.0"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
 
-apply plugin: 'groovy'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.unbroken-dome.test-sets'
-apply plugin: 'maven'
+apply plugin: 'java'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory'
+
 
 repositories {
     mavenCentral()
     mavenLocal()
 }
 
-publishing {
+group = 'ianmorgan'
+version = '0.0.6'
+
+dependencies {
+    compile group: 'org.json', name: 'json', version: '20180130'
+
+}
+
+project.publishing {
     publications {
-        mavenJava(MavenPublication) {
+        DefaultPublication(MavenPublication) {
             from components.java
         }
     }
 }
 
-artifactory {
-    clientConfig.setIncludeEnvVars(true)
+project.apply plugin: "com.jfrog.bintray"
 
-    contextUrl = 'https://mirriad.artifactoryonline.com/mirriad/'
-    publish {
-        repository {
-            repoKey = 'libs-release-local'
-            username = "123"
-            password = "123"
-        }
-        defaults {
-            publications('mavenJava')
-            publishArtifacts = true
-            publishPom = true
-            publishIvy = true
-        }
-    }
-    resolve {
-        contextUrl = 'https://mirriad.artifactoryonline.com/mirriad/'
-        repository {
-            repoKey = 'libs-release-local'
-            username = "123"
-            password = "123"
-            maven = true
-        }
+bintray {
+    user = 'ianmorgan'
+    key = bintray_api_key
+
+    publications = project.publishing.publications*.name
+
+    publish = true
+
+    pkg {
+        repo = 'commons'
+        name = 'json-utils'
+        desc = 'Java utilities to make it easier working with JSON'
+        websiteUrl = 'https://github.com/ianmorgan/json-utils'
+        issueTrackerUrl = 'https://github.com/ianmorgan/json-utils/issues'
+        vcsUrl = 'https://github.com/ianmorgan/json-utils.git'
+        licenses = ['MIT']
+        labels = ['json']
+        publicDownloadNumbers = true
+
+        // optional version attributes
+        //version {
+        //    vcsTag = "v$project.version"
+        //    gpg {
+        //        sign = true
+        //    }
+        //}
     }
 }
-
-
-group = 'ianmorgan'
-version = '0.0.3-SNAPSHOT'
-
-
-dependencies {
-    
-    compile group: 'org.json', name: 'json', version: '20180130'
-
-}
-
-
-//task wrapper(type: Wrapper) {
-//    gradleVersion = '3.2'
-//}

@@ -10,3 +10,4 @@ target
 **/git.properties
 **/environment-ex.properties
 payload
+gradle.properties
