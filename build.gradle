@@ -2,15 +2,18 @@ buildscript {
 
     repositories {
         mavenCentral()
-        jcenter()
+    //    jcenter()
+        maven { url 'https://jitpack.io' }
+
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+      //  classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        //implementation 'com.github.ianmorgan:json-utils:0.0.1'
     }
 }
 
 apply plugin: 'java'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -21,50 +24,83 @@ repositories {
     mavenLocal()
 }
 
-group = 'ianmorgan'
+group = 'com.github.ianmorgan'
+//artifact = 'json-utils'
 version = '0.0.8-SNAPSHOT'
 
 dependencies {
     compile group: 'org.json', name: 'json', version: '20180130'
 
+    implementation 'com.github.ianmorgan:json-utils:0.0.2'
+
+
 }
 
-project.publishing {
-    publications {
-        DefaultPublication(MavenPublication) {
-            from components.java
-        }
-    }
+// build a jar with source files
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java.srcDirs
+    classifier = 'sources'
 }
 
-project.apply plugin: "com.jfrog.bintray"
+// build a jar with javadoc
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+
+    classifier = 'javadoc'
+
+    from javadoc.destinationDir
+
+}
+
+
+
+artifacts {
+
+    archives sourcesJar
+
+    archives javadocJar
+
+}
+
+//project.publishing {
+//    publications {
+//        DefaultPublication(MavenPublication) {
+//            from components.java
+//        }
+//    }
+//}
+
+//project.apply plugin: "com.jfrog.bintray"
 
 // used https://github.com/bintray/gradle-bintray-plugin/issues/170 as example
-bintray {
-    user = 'ianmorgan'
-    key = bintray_api_key   // in gradle.properties
+//bintray {
+//    user = 'ianmorgan'
+//    key = bintray_api_key   // in gradle.properties
+//
+//    publications = project.publishing.publications*.name
+//
+//    publish = true
+//
+//    pkg {
+//        repo = 'commons'
+//        name = 'json-utils'
+//        desc = 'Java utilities to make it easier working with JSON'
+//        websiteUrl = 'https://github.com/ianmorgan/json-utils'
+//        issueTrackerUrl = 'https://github.com/ianmorgan/json-utils/issues'
+//        vcsUrl = 'https://github.com/ianmorgan/json-utils.git'
+//        licenses = ['MIT']
+//        labels = ['json']
+//        publicDownloadNumbers = true
+//
+//        // optional version attributes
+//        //version {
+//        //    vcsTag = "v$project.version"
+//        //    gpg {
+//        //        sign = true
+//        //    }
+//        //}
+//    }
+//}
 
-    publications = project.publishing.publications*.name
 
-    publish = true
-
-    pkg {
-        repo = 'commons'
-        name = 'json-utils'
-        desc = 'Java utilities to make it easier working with JSON'
-        websiteUrl = 'https://github.com/ianmorgan/json-utils'
-        issueTrackerUrl = 'https://github.com/ianmorgan/json-utils/issues'
-        vcsUrl = 'https://github.com/ianmorgan/json-utils.git'
-        licenses = ['MIT']
-        labels = ['json']
-        publicDownloadNumbers = true
-
-        // optional version attributes
-        //version {
-        //    vcsTag = "v$project.version"
-        //    gpg {
-        //        sign = true
-        //    }
-        //}
-    }
-}
